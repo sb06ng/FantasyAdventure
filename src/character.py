@@ -1,12 +1,9 @@
-import logging
 import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-from .ability import Ability
-
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger("GameLogic")
+from .Ability import Ability
+from .errors import NoAbilitiesError, DefeatedError, TargetDefeatedError
 
 
 @dataclass
@@ -16,15 +13,21 @@ class Character(ABC):
     level: int
     abilities: set[Ability] = field(default_factory=set)
 
-    def use_ability(self) -> int:
-        """Selects a random ability and returns its point value."""
-        if not self.abilities:
-            logger.warning(f"{self.name} has no abilities to use!")
-            return 0
+    def use_ability(self) -> Ability:
+        """
+        Select Random ability and return it
 
-        ability = random.choice(list(self.abilities))
-        logger.info(f"{self.name} prepares to use '{ability.name}' (Damage: {ability.damage})")
-        return ability.damage
+        Returns:
+            the ability
+
+        Raises:
+            NoAbilities: if no ability for this character
+        """
+        try:
+            ability = random.choice(list(self.abilities))
+            return ability
+        except IndexError as e:
+            raise NoAbilitiesError(f"Action failed: {self.name} has no abilities available.") from e
 
     def attack(self, target: Character) -> int:
         """
@@ -39,20 +42,17 @@ class Character(ABC):
 
         Raises:
             TypeError: if target is not a Character
+            DefeatedError: if the character is defeated
+            TargetDefeatedError: if the target is defeated
         """
-        
         if not isinstance(target, Character):
-            raise TypeError(f"Target must be an instance of Character, not {type(target).__name__}")
+            raise TypeError(f"Target must be a Character, not {type(target).__name__}")
 
-        # Attacker is already defeated
         if self.health_points <= 0:
-            logger.error(f"{self.name} cannot attack because they are defeated!")
-            return 0
+            raise DefeatedError(f"{self.name} is defeated and cannot attack!")
 
-        # Target is already defeated
         if target.health_points <= 0:
-            logger.info(f"{self.name} tried to attack {target.name}, but they are already down.")
-            return 0
+            raise TargetDefeatedError(f"{target.name} is already down; stop hitting them!")
 
         return self._attack_logic(target)
 
