@@ -2,7 +2,7 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-from .Ability import Ability
+from .ability import Ability
 from .errors import NoAbilitiesError, DefeatedError, TargetDefeatedError
 
 
