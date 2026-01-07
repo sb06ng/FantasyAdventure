@@ -11,6 +11,7 @@ class Character(ABC):
     name: str
     health_points: int
     level: int
+    team: str
     abilities: set[Ability] = field(default_factory=set)
 
     def use_ability(self) -> Ability:
@@ -77,3 +78,6 @@ class Character(ABC):
             True if they are equal.
         """
         return self.level == other.level
+
+    def is_alive(self) -> bool:
+        return self.health_points > 0
