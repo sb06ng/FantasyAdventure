@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 from .ability import Ability
-from .errors import NoAbilitiesError, DefeatedError, TargetDefeatedError
+from .errors import NoAbilitiesError
 
 
 @dataclass
 class Character(ABC):
     name: str
-    health_points: int
+    points: int
     level: int
     abilities: set[Ability] = field(default_factory=set)
 
@@ -42,17 +42,9 @@ class Character(ABC):
 
         Raises:
             TypeError: if target is not a Character
-            DefeatedError: if the character is defeated
-            TargetDefeatedError: if the target is defeated
         """
         if not isinstance(target, Character):
             raise TypeError(f"Target must be a Character, not {type(target).__name__}")
-
-        if self.health_points <= 0:
-            raise DefeatedError(f"{self.name} is defeated and cannot attack!")
-
-        if target.health_points <= 0:
-            raise TargetDefeatedError(f"{target.name} is already down; stop hitting them!")
 
         return self._attack_logic(target)
 
@@ -74,7 +66,7 @@ class Character(ABC):
             f"--- Character Profile ---\n"
             f"Name:   {self.name}\n"
             f"Level:  {self.level}\n"
-            f"Health: {self.health_points}\n"
+            f"Health: {self.points}\n"
             f"Skills: {', '.join([a.name for a in self.abilities]) or 'None'}\n"
             f"-------------------------"
         )

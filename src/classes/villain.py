@@ -1,5 +1,6 @@
 import random
 from dataclasses import dataclass
+
 from ..character import Character
 
 
@@ -25,5 +26,7 @@ class Villain(Character):
         ability = self.use_ability()
         damage = ability.damage
 
-        target.health_points = max(0, target.health_points - damage)
+        # Prevent points from going below 0
+        target.points = max(0, target.points - damage)
+
         return damage
