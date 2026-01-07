@@ -2,8 +2,8 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-from .ability import Ability
-from .errors import NoAbilitiesError, DefeatedError, TargetDefeatedError
+from src.abilities.ability import Ability
+from src.errors.errors import NoAbilitiesError, DefeatedError, TargetDefeatedError
 
 
 @dataclass
@@ -29,6 +29,7 @@ class Character(ABC):
         except IndexError as e:
             raise NoAbilitiesError(f"Action failed: {self.name} has no abilities available.") from e
 
+    @abstractmethod
     def attack(self, target: Character) -> int:
         """
         Decreases target health points
@@ -53,20 +54,6 @@ class Character(ABC):
 
         if target.health_points <= 0:
             raise TargetDefeatedError(f"{target.name} is already down; stop hitting them!")
-
-        return self._attack_logic(target)
-
-    @abstractmethod
-    def _attack_logic(self, target: Character) -> int:
-        """
-        Preform the logic of the attack on the character
-
-        Args:
-            target: the target character
-
-        Returns:
-            the damage dealt
-        """
         ...
 
     def __str__(self) -> str:

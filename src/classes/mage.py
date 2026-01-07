@@ -1,24 +1,33 @@
 from dataclasses import dataclass
 
-from ..character import Character
+from src.classes.character import Character
+
+LIFE_STEAL_AMOUNT = 0.07
 
 
 @dataclass
 class Mage(Character):
-	def _attack_logic(self, target: Character) -> int:
-		"""
-		Mage attack logic: deals damage and has a chance to heal
-		7% of the damage dealt.
-		"""
-		ability = self.use_ability()
-		damage = ability.damage
+    def attack(self, target: Character) -> int:
+        """
+		Overridden attack to handle the Mage's unique life steal mechanic.
 
-		# Apply damage to target
-		target.health_points = max(0, target.health_points - damage)
+	   Args:
+            target: The target character
 
-		# Mage specific: Gain 7% of damage dealt back as HP
-		heal_amount = int(damage * 0.07)
-		if heal_amount > 0:
-			self.health_points += heal_amount
+        Returns:
+            Return the damage dealt across all strikes.
+        """
+        super().attack(target)
 
-		return damage
+        ability = self.use_ability()
+        damage = ability.damage
+
+        # Apply damage and ensure HP doesn't drop below 0
+        target.health_points = max(0, target.health_points - damage)
+
+        # Mage specific: Gain 7% of damage dealt back as HP
+        heal_amount = int(damage * LIFE_STEAL_AMOUNT)
+        if heal_amount > 0:
+            self.health_points += heal_amount
+
+        return damage
