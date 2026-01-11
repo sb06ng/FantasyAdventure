@@ -6,20 +6,14 @@ from src.game.battle import Battle
 
 
 def main():
-    # --- Create Abilities ---
-    slash = Ability(name="Slash", damage=10)
-    fireball = Ability(name="Fireball", damage=25)
-    ice_shard = Ability(name="Ice Shard", damage=15)
-    smash = Ability(name="Smash", damage=8)
-
     # --- Create Characters ---
     # Team Heroes
-    hero_warrior = Warrior(name="Aragorn", abilities={slash, smash})
-    hero_mage = Mage(name="Gandalf", abilities={fireball})
+    hero_warrior = Warrior(name="Aragorn")
+    hero_mage = Mage(name="Gandalf")
 
     # Team Villains
-    villain_warrior = Warrior(name="Orc Berserker", abilities={slash})
-    villain_mage = Mage(name="Saruman", abilities={ice_shard, fireball})
+    villain_warrior = Warrior(name="Orc Berserker")
+    villain_mage = Mage(name="Saruman")
 
     # --- Create Teams ---
     fellowship = Team(name="The Fellowship", members=[hero_warrior, hero_mage])

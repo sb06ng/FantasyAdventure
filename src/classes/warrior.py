@@ -2,6 +2,7 @@ import random
 from dataclasses import dataclass
 
 from src import Ability
+from src.abilities.catalog import DEFAULT_WARRIOR_SET
 from src.classes.character import Character
 from src.errors.errors import TargetDefeatedError
 
@@ -13,6 +14,12 @@ class Warrior(Character):
     """ Warrior's character.
         Has 33% chance to double attack, would not happen if warrior has 5 or less hp
     """
+
+    def __post_init__(self):
+        """
+        We ensure the defaults are added to whatever the user provided.
+        """
+        self.abilities.update(DEFAULT_WARRIOR_SET)
 
     def attack(self, target: Character) -> list[Ability]:
         """

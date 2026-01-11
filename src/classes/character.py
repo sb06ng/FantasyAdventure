@@ -3,12 +3,12 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 from src.abilities.ability import Ability
+from src.abilities.catalog import DEFAULT_SET
 from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType
 
 DEFAULT_HEALTH_POINTS = 15
 DEFAULT_LEVEL = 1
 DEFAULT_SPEED = 1
-DEFAULT_ABILITIES = [Ability("Punch", 5)]
 
 
 @dataclass
@@ -19,6 +19,12 @@ class Character(ABC):
     level: int = DEFAULT_LEVEL
     abilities: set[Ability] = field(default_factory=set)
 
+    def __post_init__(self):
+        """
+        We ensure the defaults are added to whatever the user provided.
+        """
+        self.abilities.update(DEFAULT_SET)
+
     def use_ability(self) -> Ability:
         """
         Select Random ability and return it
@@ -26,9 +32,8 @@ class Character(ABC):
         Returns:
             the ability
         """
-        if not self.abilities:
-            # We use .update() because DEFAULT_ABILITIES is a list and abilities is a set
-            self.abilities.update(DEFAULT_ABILITIES)
+        # We use .update() because DEFAULT_ABILITIES is a list and abilities is a set
+        self.abilities.update(DEFAULT_SET)
 
         return random.choice(list(self.abilities))
 
