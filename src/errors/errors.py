@@ -13,11 +13,6 @@ class TargetDefeatedError(GameError):
     pass
 
 
-class InsufficientHPError(GameError):
-    """Raised when a character doesn't have enough HP to perform a special move."""
-    pass
-
-
 class NoAbilitiesError(GameError):
     """ Raised when you try to access the character's abilities and its empty"""
     pass

@@ -19,15 +19,10 @@ class Mage(Character):
         """
         super().attack(target)
 
-        ability = self.use_ability()
-        damage = ability.damage
-
-        # Apply damage and ensure HP doesn't drop below 0
-        target.health_points = max(0, target.health_points - damage)
-
+        total_damage = self._attack_logic(target)
         # Mage specific: Gain 7% of damage dealt back as HP
-        heal_amount = int(damage * LIFE_STEAL_AMOUNT)
+        heal_amount = int(total_damage * LIFE_STEAL_AMOUNT)
         if heal_amount > 0:
             self.health_points += heal_amount
 
-        return damage
+        return total_damage

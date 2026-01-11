@@ -3,10 +3,11 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 from src.abilities.ability import Ability
-from src.errors.errors import DefeatedError, TargetDefeatedError
+from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType
 
 DEFAULT_HEALTH_POINTS = 15
 DEFAULT_LEVEL = 1
+DEFAULT_SPEED = 1
 DEFAULT_ABILITIES = [Ability("Punch", 5)]
 
 
@@ -14,6 +15,7 @@ DEFAULT_ABILITIES = [Ability("Punch", 5)]
 class Character(ABC):
     name: str
     health_points: int = DEFAULT_HEALTH_POINTS
+    speed: int = DEFAULT_SPEED
     level: int = DEFAULT_LEVEL
     abilities: set[Ability] = field(default_factory=set)
 
@@ -31,24 +33,20 @@ class Character(ABC):
         return random.choice(list(self.abilities))
 
     @abstractmethod
-    def attack(self, target: Character) -> int:
+    def attack(self, target: Character):
         """
         Decreases target health points
-        Returns the damage dealt
 
         Args:
             target: the target character
 
-        Returns:
-            the damage dealt
-
         Raises:
-            TypeError: if target is not a Character
+            InvalidObjectType: if target is not a Character
             DefeatedError: if the character is defeated
             TargetDefeatedError: if the target is defeated
         """
         if not isinstance(target, Character):
-            raise TypeError(f"Target must be a Character, not {type(target).__name__}")
+            raise InvalidObjectType(f"Target must be a Character, not {type(target).__name__}")
 
         if self.health_points <= 0:
             raise DefeatedError(f"{self.name} is defeated and cannot attack!")
@@ -79,3 +77,12 @@ class Character(ABC):
 
     def is_alive(self) -> bool:
         return self.health_points > 0
+
+    def _attack_logic(self, target: Character):
+        # perform first attack
+        ability = self.use_ability()
+        total_damage = ability.damage
+
+        # Apply damage and ensure HP doesn't drop below 0
+        target.health_points = max(0, target.health_points - total_damage)
+        return total_damage
