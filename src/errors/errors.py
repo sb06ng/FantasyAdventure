@@ -26,3 +26,12 @@ class NoAbilitiesError(GameError):
 class NoWinnerError(GameError):
     """ Raised when a battle ended without a winner."""
     pass
+
+
+class InvalidMemberError(GameError):
+    """Exception raised when a non-Character object is added to a Team."""
+    pass
+
+
+class InvalidObjectType(GameError):
+    """ Exception raised when a non-Character object is provided"""

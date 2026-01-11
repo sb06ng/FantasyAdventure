@@ -3,15 +3,18 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 from src.abilities.ability import Ability
-from src.errors.errors import NoAbilitiesError, DefeatedError, TargetDefeatedError
+from src.errors.errors import DefeatedError, TargetDefeatedError
+
+DEFAULT_HEALTH_POINTS = 15
+DEFAULT_LEVEL = 1
+DEFAULT_ABILITIES = [Ability("Punch", 5)]
 
 
 @dataclass
 class Character(ABC):
     name: str
-    health_points: int
-    level: int
-    team: str
+    health_points: int = DEFAULT_HEALTH_POINTS
+    level: int = DEFAULT_LEVEL
     abilities: set[Ability] = field(default_factory=set)
 
     def use_ability(self) -> Ability:
@@ -20,15 +23,12 @@ class Character(ABC):
 
         Returns:
             the ability
-
-        Raises:
-            NoAbilities: if no ability for this character
         """
-        try:
-            ability = random.choice(list(self.abilities))
-            return ability
-        except IndexError as e:
-            raise NoAbilitiesError(f"Action failed: {self.name} has no abilities available.") from e
+        if not self.abilities:
+            # We use .update() because DEFAULT_ABILITIES is a list and abilities is a set
+            self.abilities.update(DEFAULT_ABILITIES)
+
+        return random.choice(list(self.abilities))
 
     @abstractmethod
     def attack(self, target: Character) -> int:
@@ -68,16 +68,14 @@ class Character(ABC):
         )
 
     def __eq__(self, other) -> bool:
-        """
-        Compare two characters by level
+        return self is other
 
-        Args:
-            other: the other character
-
-        Returns:
-            True if they are equal.
+    def __hash__(self):
         """
-        return self.level == other.level
+        Allows the object to be used as a dictionary key.
+        Hashes based on the object's memory address (identity).
+        """
+        return id(self)
 
     def is_alive(self) -> bool:
         return self.health_points > 0

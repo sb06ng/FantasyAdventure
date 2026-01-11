@@ -5,7 +5,7 @@ from src.classes.character import Character
 LIFE_STEAL_AMOUNT = 0.07
 
 
-@dataclass
+@dataclass(eq=False)
 class Mage(Character):
     def attack(self, target: Character) -> int:
         """

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from src.classes.character import Character
 
 
-@dataclass
+@dataclass(eq=False)
 class Villain(Character):
     def attack(self, target: Character, steal_ability: bool = False) -> int:
         """

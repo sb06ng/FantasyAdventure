@@ -4,7 +4,7 @@ from src.classes.character import Character
 from src.errors.errors import InsufficientHPError, TargetDefeatedError
 
 
-@dataclass
+@dataclass(eq=False)
 class Warrior(Character):
     def attack(self, target: Character, double_attack: bool = False) -> int:
         """
