@@ -3,7 +3,6 @@ from src.classes.warrior import Warrior
 from src.classes.mage import Mage
 from src.teams.team import Team
 from src.game.battle import Battle
-from src.errors.errors import NoWinnerError
 
 
 def main():
@@ -34,23 +33,22 @@ def main():
 
 
 def run_battle(first, second):
-    print(f"⚔️  Starting Battle: {first.name} vs {second.name} ⚔️")
+    print(f"Starting Battle: {first.name} vs {second.name} ")
     try:
         # We pass Teams into start() now
         winner = Battle.start(first, second)
 
         if isinstance(winner, Team):
-            print(f"🏆 VICTORY! The winner is {winner.name}!")
+            print(f"VICTORY! The winner is {winner.name}!")
             print(f"Survivors: {', '.join([m.name for m in winner.members if m.is_alive()])}")
         else:
             # Fallback if 1v1 logic returns a Character
-            print(f"🏆 VICTORY! The winner is {winner.name}!")
+            print(f"VICTORY! The winner is {winner.name}!")
 
-    except NoWinnerError:
-        print("\n💨 The battle ended in a draw (Time Limit reached)!")
     except Exception as e:
-        print(f"\n❌ An error occurred: {e}")
+        print(f"\n An error occurred: {e}")
     print("=" * 30)
+    print()
 
 
 if __name__ == "__main__":

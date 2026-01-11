@@ -1,6 +1,7 @@
 import random
 from dataclasses import dataclass
 
+from src import Ability
 from src.classes.character import Character
 
 SKILL_CHANCE = 10
@@ -8,7 +9,7 @@ SKILL_CHANCE = 10
 
 @dataclass(eq=False)
 class Villain(Character):
-    def attack(self, target: Character) -> int:
+    def attack(self, target: Character) -> list[Ability]:
         """
         Overridden attack to handle the Villain's unique steal mechanic.
 
@@ -27,4 +28,5 @@ class Villain(Character):
             # If the ability exist it will not add it
             self.abilities.add(stolen_ability)
 
-        return self._attack_logic(target)
+        ability_used = self._attack_logic(target)
+        return [ability_used]

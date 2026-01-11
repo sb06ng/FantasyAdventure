@@ -1,6 +1,7 @@
 import random
 from dataclasses import dataclass
 
+from src import Ability
 from src.classes.character import Character
 from src.errors.errors import TargetDefeatedError
 
@@ -13,7 +14,7 @@ class Warrior(Character):
         Has 33% chance to double attack, would not happen if warrior has 5 or less hp
     """
 
-    def attack(self, target: Character) -> int:
+    def attack(self, target: Character) -> list[Ability]:
         """
         Overridden attack to handle the Warrior's unique Double Attack mechanic.
 
@@ -25,17 +26,17 @@ class Warrior(Character):
         """
         super().attack(target)
 
-        total_damage = self._attack_logic(target)
+        abilities_used = [self._attack_logic(target)]
         # Check if Warrior has enough HP to perform the double attack
         if self.health_points <= 5:
             if random.randint(0, 100) <= SKILL_CHANCE:
                 self.health_points -= 5
                 # We perform the second attack by calling this function again (without the flag)
                 try:
-                    total_damage += self._attack_logic(target)
+                    abilities_used.append(self._attack_logic(target))
                 except TargetDefeatedError:
                     # If the target died in the first hit, attack will raise TargetDefeatedError
                     self.health_points += 5
                     pass
 
-        return total_damage
+        return abilities_used

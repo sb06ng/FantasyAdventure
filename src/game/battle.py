@@ -1,7 +1,7 @@
 import random
 
 from src.classes.character import Character
-from src.errors.errors import InvalidObjectType
+from src.errors.errors import InvalidObjectType, NoWinnerError
 from src.teams.team import Team
 
 MINIMUM_ROUNDS = 3
@@ -27,6 +27,7 @@ class Battle:
 
         Raises:
             InvalidObjectType: If the characters provided are not Character instances.
+            NoWinnerError: If the battle ended without a winner.
         """
         team_a = cls._ensure_team(first)
         team_b = cls._ensure_team(second)
@@ -61,23 +62,32 @@ class Battle:
             
         Returns:
             Character | None: The character who finished the battle, or None.
-        """
 
+        Raises:
+            NoWinnerError: If the battle ended without a winner.
+        """
+        count = 0
         for fighter in action_queue:
             if not fighter.is_alive():
+                # check if all the fighters are dead
+                count += 1
                 continue
 
-            fighter_team = team_a if fighter in team_a else team_b
+            fighter_team = team_a if fighter in team_a.members else team_b
 
-            targets = [c for c in action_queue if c.is_alive() and c not in fighter_team]
+            targets = [c for c in action_queue if c.is_alive() and c not in fighter_team.members]
 
             if not targets:
                 # No enemies left? The current fighter's side wins.
                 return fighter_team
 
             target = random.choice(targets)
-            fighter.attack(target)
+            abilities_used = fighter.attack(target)
+            for ability in abilities_used:
+                print(f"{fighter.name} attacked {target.name} with {ability.name} for {ability.damage} damage.")
 
+        if len(action_queue) == count:
+            raise NoWinnerError("All fighters are dead")
         return None
 
     @staticmethod
