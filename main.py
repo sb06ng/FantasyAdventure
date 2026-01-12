@@ -21,7 +21,14 @@ def main():
 
     run_battle(fellowship, mordor)
 
+    hero_warrior.health_points = 100
+    villain_warrior.health_points = 100
     run_battle(hero_warrior, villain_warrior)
+
+    hero_warrior.health_points = 100
+
+    villain_warrior.health_points = 100
+    villain_mage.health_points = 100
 
     run_battle(hero_warrior, mordor)
 

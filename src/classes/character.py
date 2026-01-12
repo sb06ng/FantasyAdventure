@@ -6,7 +6,7 @@ from src.abilities.ability import Ability
 from src.abilities.catalog import DEFAULT_SET
 from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType
 
-DEFAULT_HEALTH_POINTS = 15
+DEFAULT_HEALTH_POINTS = 100
 DEFAULT_LEVEL = 1
 DEFAULT_SPEED = 1
 
