@@ -38,12 +38,15 @@ class Character(ABC):
         return random.choice(list(self.abilities))
 
     @abstractmethod
-    def attack(self, target: Character) -> list[Ability]:
+    def attack(self, target: Character) -> int:
         """
         Decreases target health points
 
         Args:
             target: the target character
+
+        Returns:
+            the amount of total damage done
 
         Raises:
             InvalidObjectType: if target is not a Character
@@ -83,11 +86,11 @@ class Character(ABC):
     def is_alive(self) -> bool:
         return self.health_points > 0
 
-    def _attack_logic(self, target: Character) -> Ability:
+    def _attack_logic(self, target: Character) -> int:
         # perform first attack
         ability = self.use_ability()
         total_damage = ability.damage
 
         # Apply damage and ensure HP doesn't drop below 0
         target.health_points = max(0, target.health_points - total_damage)
-        return ability
+        return total_damage

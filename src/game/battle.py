@@ -82,9 +82,8 @@ class Battle:
                 return fighter_team
 
             target = random.choice(targets)
-            abilities_used = fighter.attack(target)
-            for ability in abilities_used:
-                print(f"{fighter.name} attacked {target.name} with {ability.name} for {ability.damage} damage.")
+            total_damage = fighter.attack(target)
+            print(f"{fighter.name} attacked {target.name} for {total_damage} damage.")
 
         if len(action_queue) == count:
             raise NoWinnerError("All fighters are dead")

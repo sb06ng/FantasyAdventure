@@ -9,7 +9,7 @@ SKILL_CHANCE = 10
 
 @dataclass(eq=False)
 class Villain(Character):
-    def attack(self, target: Character) -> list[Ability]:
+    def attack(self, target: Character) -> int:
         """
         Overridden attack to handle the Villain's unique steal mechanic.
 
@@ -28,5 +28,5 @@ class Villain(Character):
             # If the ability exist it will not add it
             self.abilities.add(stolen_ability)
 
-        ability_used = self._attack_logic(target)
-        return [ability_used]
+        total_damage = self._attack_logic(target)
+        return total_damage

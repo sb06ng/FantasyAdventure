@@ -21,7 +21,7 @@ class Warrior(Character):
         """
         self.abilities.update(DEFAULT_WARRIOR_SET)
 
-    def attack(self, target: Character) -> list[Ability]:
+    def attack(self, target: Character) -> int:
         """
         Overridden attack to handle the Warrior's unique Double Attack mechanic.
 
@@ -33,17 +33,17 @@ class Warrior(Character):
         """
         super().attack(target)
 
-        abilities_used = [self._attack_logic(target)]
+        total_damage = self._attack_logic(target)
         # Check if Warrior has enough HP to perform the double attack
         if self.health_points <= 5:
             if random.randint(0, 100) <= SKILL_CHANCE:
                 self.health_points -= 5
                 # We perform the second attack by calling this function again (without the flag)
                 try:
-                    abilities_used.append(self._attack_logic(target))
+                    total_damage += self._attack_logic(target)
                 except TargetDefeatedError:
                     # If the target died in the first hit, attack will raise TargetDefeatedError
                     self.health_points += 5
                     pass
 
-        return abilities_used
+        return total_damage

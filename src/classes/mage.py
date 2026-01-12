@@ -15,7 +15,7 @@ class Mage(Character):
         """
         self.abilities.update(DEFAULT_MAGE_SET)
 
-    def attack(self, target: Character) -> list[Ability]:
+    def attack(self, target: Character) -> int:
         """
 		Overridden attack to handle the Mage's unique life steal mechanic.
 
@@ -27,10 +27,10 @@ class Mage(Character):
         """
         super().attack(target)
 
-        ability_used = self._attack_logic(target)
+        total_damage = self._attack_logic(target)
         # Mage specific: Gain 7% of damage dealt back as HP
-        heal_amount = int(ability_used.damage * LIFE_STEAL_AMOUNT)
+        heal_amount = int(total_damage * LIFE_STEAL_AMOUNT)
         if heal_amount > 0:
             self.health_points += heal_amount
 
-        return [ability_used]
+        return total_damage
