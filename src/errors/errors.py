@@ -30,6 +30,12 @@ class InvalidMemberError(GameError):
 
 class InvalidObjectType(GameError):
     """ Exception raised when a non-Character object is provided"""
+    pass
+
+
+class ItemIsBrokenError(GameError):
+    """Exception raised when an item is broken."""
+    pass
 
 
 __all__ = [
@@ -42,4 +48,5 @@ __all__ = [
     InvalidObjectType.__name__,
     InvalidMemberError.__name__,
     InvalidObjectType.__name__,
+    ItemIsBrokenError.__name__,
 ]

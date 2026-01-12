@@ -4,11 +4,16 @@ from dataclasses import dataclass, field
 
 from src.abilities import AbilityLibrary
 from src.abilities.ability import Ability
-from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType
+from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType, ItemIsBrokenError
+from src.inventory import Inventory
+from src.inventory.item import TargetType
+from src.inventory.item.item import Item
 
 DEFAULT_HEALTH_POINTS = 100
 DEFAULT_LEVEL = 1
 DEFAULT_SPEED = 1
+
+USE_ITEM_CHANCE = 0.2
 
 
 @dataclass
@@ -18,6 +23,7 @@ class Character(ABC):
     speed: int = DEFAULT_SPEED
     level: int = DEFAULT_LEVEL
     abilities: set[Ability] = field(default_factory=set)
+    inventory: Inventory = field(default_factory=Inventory)
 
     def __post_init__(self):
         """
@@ -105,5 +111,32 @@ class Character(ABC):
         target = random.choice([c for c in enemies if c.is_alive()])
         if target.health_points <= 0:
             raise DefeatedError(f"{self.name} is defeated!")
-        damage_delete = self.attack(target)
-        print(f"{self.name} attacked {target.name} for {damage_delete} damage!")
+
+        if self.inventory.items and random.random() < USE_ITEM_CHANCE:
+            item_to_use = self.inventory.get_item()
+            if item_to_use.target_type == TargetType.ALLY:
+                target = random.choice([c for c in allies if c.is_alive()])
+
+            self._use_item(target, item_to_use)
+            self.inventory.add_item(item_to_use)
+            print(f"{self.name} used {item_to_use.name} on {target.name} and {item_to_use.description}!")
+        else:
+            damage_delete = self.attack(target)
+            print(f"{self.name} attacked {target.name} for {damage_delete} damage!")
+
+    @staticmethod
+    def _use_item(target: Character, item: Item):
+        """
+        Use the item on the target and subtract one durability.
+
+        Args:
+            target: The character to use the item on
+
+        Raises:
+            ItemIsBrokenError: If an item is broken
+        """
+        if item.durability < 0:
+            raise ItemIsBrokenError("Item can't be used, durability cannot be less than 0")
+        item.durability -= 1
+
+        target.health_points = max(0, target.health_points + item.get_effect())
