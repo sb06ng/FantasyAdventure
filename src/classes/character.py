@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from src.abilities import AbilityLibrary
 from src.abilities.ability import Ability
 from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType
+from src.teams.team import Team
 
 DEFAULT_HEALTH_POINTS = 100
 DEFAULT_LEVEL = 1
@@ -94,3 +95,14 @@ class Character(ABC):
         # Apply damage and ensure HP doesn't drop below 0
         target.health_points = max(0, target.health_points - total_damage)
         return total_damage
+
+    def take_turn(self, ally_team: Team, enemy_team: Team):
+        """
+        Does the turn logic for character
+        Args:
+            ally_team: the allay team of the character
+            enemy_team: the enemy team
+        """
+        target = random.choice([c for c in enemy_team.members if c.is_alive()])
+        damage_delete = self.attack(target)
+        print(f"{self.name} attacked {target.name} for {damage_delete} damage!")

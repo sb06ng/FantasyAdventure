@@ -32,3 +32,10 @@ class Team:
 
     def __eq__(self, other: Team) -> bool:
         return self.name == other.name
+
+    def is_alive(self) -> bool:
+        """Returns whether the team is alive."""
+        for member in self.members:
+            if not member.is_alive():
+                return False
+        return True

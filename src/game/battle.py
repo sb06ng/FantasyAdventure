@@ -1,5 +1,3 @@
-import random
-
 from src.classes.character import Character
 from src.errors.errors import InvalidObjectType, NoWinnerError
 from src.teams.team import Team
@@ -38,6 +36,9 @@ class Battle:
             if not isinstance(fighter, Character):
                 raise InvalidObjectType(f"Fighter must be a Character, not {type(fighter).__name__}")
 
+        if not team_a.is_alive() and not team_b.is_alive():
+            raise NoWinnerError("All fighters are dead")
+
         action_queue = sorted(all_fighters, key=lambda x: x.speed)
 
         winner = None
@@ -61,32 +62,19 @@ class Battle:
             team_b: The second team to play in the round.
             
         Returns:
-            Character | None: The character who finished the battle, or None.
-
-        Raises:
-            NoWinnerError: If the battle ended without a winner.
+            Team | None: The team who won the battle, or None.
         """
-        count = 0
+
         for fighter in action_queue:
             if not fighter.is_alive():
-                # check if all the fighters are dead
-                count += 1
                 continue
 
-            fighter_team = team_a if fighter in team_a.members else team_b
+            fighter_team, target_team = (team_a, team_b) if fighter in team_a.members else (team_b, team_a)
 
-            targets = [c for c in action_queue if c.is_alive() and c not in fighter_team.members]
-
-            if not targets:
-                # No enemies left? The current fighter's side wins.
+            if not target_team.is_alive():
                 return fighter_team
 
-            target = random.choice(targets)
-            total_damage = fighter.attack(target)
-            print(f"{fighter.name} attacked {target.name} for {total_damage} damage.")
-
-        if len(action_queue) == count:
-            raise NoWinnerError("All fighters are dead")
+            fighter.take_turn(fighter_team, target_team)
         return None
 
     @staticmethod
