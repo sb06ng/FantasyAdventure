@@ -1,3 +1,4 @@
+import copy
 import random
 
 from src.inventory.item.item import Item, TargetType
@@ -19,4 +20,5 @@ class ItemLibrary(Item):
     @classmethod
     def get_random_item(cls) -> Item:
         """ Returns a random Item """
-        return random.choice(list(cls._ITEMS))
+        random_blueprint = random.choice(list(cls._ITEMS.values()))
+        return copy.deepcopy(random_blueprint)

@@ -1,6 +1,5 @@
 from src.classes import Mage, Warrior
 from src.game.battle import Battle
-from src.inventory.item import Sword, HealthPotion
 from src.teams.team import Team
 
 
@@ -9,10 +8,12 @@ def main():
     # Team Heroes
 
     hero_warrior = Warrior(name="Aragorn")
-    hero_warrior.inventory.add_item(Sword())
+    from src.inventory.item import ItemLibrary
+    hero_warrior.inventory.add_item(ItemLibrary.get_random_item())
     hero_mage = Mage(name="Gandalf")
-    hero_mage.inventory.add_item(HealthPotion())
+    hero_mage.inventory.add_item(ItemLibrary.get_random_item())
 
+    hero_warrior.inventory.show_inventory()
     # Team Villains
     villain_warrior = Warrior(name="Orc Berserker")
     villain_mage = Mage(name="Saruman")

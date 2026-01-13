@@ -1,2 +1,2 @@
+from .catalog import ItemLibrary
 from .item import TargetType
-from .catalog import HealthPotion, Sword

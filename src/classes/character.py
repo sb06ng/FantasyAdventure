@@ -7,11 +7,18 @@ from src.abilities.ability import Ability
 from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType, ItemIsBrokenError
 from src.inventory import Inventory
 from src.inventory.item import TargetType
+from src.inventory.item.catalog import ItemLibrary
 from src.inventory.item.item import Item
 
 DEFAULT_HEALTH_POINTS = 100
 DEFAULT_LEVEL = 1
 DEFAULT_SPEED = 1
+
+DEFAULT_XP_AMOUNT = 10
+MINIMUM_XP_FOR_LEVEL_UP = 100
+GET_RANDOM_ITEM = 0.5
+MINIMUM_HEALTH_GAIN = 15
+MAXIMUM_HEALTH_GAIN = 30
 
 USE_ITEM_CHANCE = 0.2
 
@@ -21,7 +28,8 @@ class Character(ABC):
     name: str
     health_points: int = DEFAULT_HEALTH_POINTS
     speed: int = DEFAULT_SPEED
-    level: int = DEFAULT_LEVEL
+    _level: int = DEFAULT_LEVEL
+    _xp: int = 0
     abilities: set[Ability] = field(default_factory=set)
     inventory: Inventory = field(default_factory=Inventory)
 
@@ -67,6 +75,10 @@ class Character(ABC):
 
         if target.health_points <= 0:
             raise TargetDefeatedError(f"{target.name} is already down; stop hitting them!")
+        self._xp += DEFAULT_XP_AMOUNT
+        if self._xp >= MINIMUM_XP_FOR_LEVEL_UP + (DEFAULT_XP_AMOUNT * self._level):
+            self._xp -= MINIMUM_XP_FOR_LEVEL_UP + (DEFAULT_XP_AMOUNT * self._level)
+        self._level_up()
         ...
 
     def __str__(self) -> str:
@@ -117,9 +129,15 @@ class Character(ABC):
             if item_to_use.target_type == TargetType.ALLY:
                 target = random.choice([c for c in allies if c.is_alive()])
 
-            self._use_item(target, item_to_use)
+            try:
+                self._use_item(target, item_to_use)
+            except ItemIsBrokenError:
+                print("item is broken")
+                self.inventory.add_item(item_to_use)
+                return
             self.inventory.add_item(item_to_use)
-            print(f"{self.name} used {item_to_use.name} on {target.name} and {item_to_use.description}!")
+            print(
+                f"{self.name} used {item_to_use.name} on {target.name} and {item_to_use.description} for {item_to_use.effect}!")
         else:
             damage_delete = self.attack(target)
             print(f"{self.name} attacked {target.name} for {damage_delete} damage!")
@@ -140,3 +158,16 @@ class Character(ABC):
         item.durability -= 1
 
         target.health_points = max(0, target.health_points + item.get_effect())
+
+    def _level_up(self):
+        string_to_print = f"level up {self.name} and gained: "
+        if random.random() < GET_RANDOM_ITEM:
+            item = ItemLibrary.get_random_item()
+            self.inventory.add_item(item)
+            string_to_print += item.__str__()
+        else:
+            health_gain = random.randint(MINIMUM_HEALTH_GAIN, MAXIMUM_HEALTH_GAIN)
+            string_to_print += f"{health_gain} health points."
+            self.health_points += health_gain
+
+        print(string_to_print)

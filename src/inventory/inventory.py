@@ -9,6 +9,8 @@ class Inventory:
     items: list[Item] = field(default_factory=list)
 
     def add_item(self, item: Item):
+        if not isinstance(item, Item):
+            raise TypeError("Item must be of type Item.")
         self.items.append(item)
 
     def remove_item(self, item: Item):
