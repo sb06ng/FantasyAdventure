@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from src import Character
+
+from src.classes import Character
 from src.errors.errors import InvalidMemberError
 
 

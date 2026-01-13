@@ -30,3 +30,16 @@ class InvalidMemberError(GameError):
 
 class InvalidObjectType(GameError):
     """ Exception raised when a non-Character object is provided"""
+
+
+__all__ = [
+    GameError.__name__,
+    DefeatedError.__name__,
+    TargetDefeatedError.__name__,
+    NoAbilitiesError.__name__,
+    NoWinnerError.__name__,
+    InvalidMemberError.__name__,
+    InvalidObjectType.__name__,
+    InvalidMemberError.__name__,
+    InvalidObjectType.__name__,
+]

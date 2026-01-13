@@ -1,8 +1,6 @@
-from src.abilities.ability import Ability
-from src.classes.warrior import Warrior
-from src.classes.mage import Mage
-from src.teams.team import Team
+from src.classes import Mage, Warrior
 from src.game.battle import Battle
+from src.teams.team import Team
 
 
 def main():
@@ -21,16 +19,15 @@ def main():
 
     run_battle(fellowship, mordor)
 
-    hero_warrior.health_points = 100
-    villain_warrior.health_points = 100
-    run_battle(hero_warrior, villain_warrior)
-
-    hero_warrior.health_points = 100
+    warrior1 = Warrior(name="Arg")
+    warrior2 = Warrior(name="Orc")
+    run_battle(warrior1, warrior2)
 
     villain_warrior.health_points = 100
     villain_mage.health_points = 100
+    warrior3 = Warrior(name="hero")
 
-    run_battle(hero_warrior, mordor)
+    run_battle(warrior3, mordor)
 
 
 def run_battle(first, second):

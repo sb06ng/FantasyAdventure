@@ -2,8 +2,8 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
+from src.abilities import AbilityLibrary
 from src.abilities.ability import Ability
-from src.abilities.catalog import DEFAULT_SET
 from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType
 
 DEFAULT_HEALTH_POINTS = 100
@@ -23,7 +23,7 @@ class Character(ABC):
         """
         We ensure the defaults are added to whatever the user provided.
         """
-        self.abilities.update(DEFAULT_SET)
+        self.abilities.update(AbilityLibrary.get_preset(self.__class__.__name__))
 
     def use_ability(self) -> Ability:
         """
@@ -33,7 +33,7 @@ class Character(ABC):
             the ability
         """
         # We use .update() because DEFAULT_ABILITIES is a list and abilities is a set
-        self.abilities.update(DEFAULT_SET)
+        self.abilities.update(AbilityLibrary.get_preset(self.__class__.__name__))
 
         return random.choice(list(self.abilities))
 

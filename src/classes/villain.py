@@ -1,7 +1,6 @@
 import random
 from dataclasses import dataclass
 
-from src import Ability
 from src.classes.character import Character
 
 SKILL_CHANCE = 10
