@@ -74,7 +74,7 @@ class Battle:
             if not target_team.is_alive():
                 return fighter_team
 
-            fighter.take_turn(fighter_team, target_team)
+            fighter.take_turn(fighter_team.members, target_team.members)
         return None
 
     @staticmethod

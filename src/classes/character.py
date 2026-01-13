@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from src.abilities import AbilityLibrary
 from src.abilities.ability import Ability
 from src.errors.errors import DefeatedError, TargetDefeatedError, InvalidObjectType
-from src.teams.team import Team
 
 DEFAULT_HEALTH_POINTS = 100
 DEFAULT_LEVEL = 1
@@ -96,13 +95,15 @@ class Character(ABC):
         target.health_points = max(0, target.health_points - total_damage)
         return total_damage
 
-    def take_turn(self, ally_team: Team, enemy_team: Team):
+    def take_turn(self, allies: list[Character], enemies: list[Character]):
         """
         Does the turn logic for character
         Args:
-            ally_team: the allay team of the character
-            enemy_team: the enemy team
+            allies: the allay team of the character
+            enemies: the enemy team
         """
-        target = random.choice([c for c in enemy_team.members if c.is_alive()])
+        target = random.choice([c for c in enemies if c.is_alive()])
+        if target.health_points <= 0:
+            raise DefeatedError(f"{self.name} is defeated!")
         damage_delete = self.attack(target)
         print(f"{self.name} attacked {target.name} for {damage_delete} damage!")
