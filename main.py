@@ -1,57 +1,51 @@
-from src.classes import Mage, Warrior
-from src.game.battle import Battle
-from src.teams.team import Team
+import logging
+import sys
+
+from src.data.item import ItemLibrary
+from src.engine.battle import Battle
+from src.entities.jobs.mage import Mage
+from src.entities.jobs.villain import Villain
+from src.entities.jobs.warrior import Warrior
+from src.team.team import Team
+
+# This ensures we see the battle logs in the console
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
 
 
 def main():
-    # --- Create Characters ---
-    # Team Heroes
+    conan = Warrior(name="Conan", speed=12)
+    conan.inventory.add_item(ItemLibrary.get_random_item())
 
-    hero_warrior = Warrior(name="Aragorn")
-    from src.inventory.item import ItemLibrary
-    hero_warrior.inventory.add_item(ItemLibrary.get_random_item())
-    hero_mage = Mage(name="Gandalf")
-    hero_mage.inventory.add_item(ItemLibrary.get_random_item())
+    merlin = Mage(name="Merlin", speed=10)
 
-    hero_warrior.inventory.show_inventory()
-    # Team Villains
-    villain_warrior = Warrior(name="Orc Berserker")
-    villain_mage = Mage(name="Saruman")
+    joker = Villain(name="Joker", speed=14)
 
-    # --- Create Teams ---
-    fellowship = Team(name="The Fellowship", members=[hero_warrior, hero_mage])
-    mordor = Team(name="Mordor", members=[villain_warrior, villain_mage])
+    minion = Warrior(name="Henchman", speed=8)
+    minion.inventory.add_item(ItemLibrary.get_random_item())
 
-    run_battle(fellowship, mordor)
+    heroes_team = Team(name="The Guardians")
+    heroes_team.add_member(conan)
+    heroes_team.add_member(merlin)
 
-    warrior1 = Warrior(name="Arg")
-    warrior2 = Warrior(name="Orc")
-    run_battle(warrior1, warrior2)
+    villains_team = Team(name="The Syndicate")
+    villains_team.add_member(joker)
+    villains_team.add_member(minion)
 
-    villain_warrior.health_points = 100
-    villain_mage.health_points = 100
-    warrior3 = Warrior(name="hero")
+    engine = Battle(heroes_team, villains_team)
 
-    run_battle(warrior3, mordor)
+    winner = engine.start()
 
-
-def run_battle(first, second):
-    print(f"Starting Battle: {first.name} vs {second.name} ")
-    try:
-        # We pass Teams into start() now
-        winner = Battle.start(first, second)
-
-        if isinstance(winner, Team):
-            print(f"VICTORY! The winner is {winner.name}!")
-            print(f"Survivors: {', '.join([m.name for m in winner.members if m.is_alive()])}")
-        else:
-            # Fallback if 1v1 logic returns a Character
-            print(f"VICTORY! The winner is {winner.name}!")
-
-    except Exception as e:
-        print(f"\n An error occurred: {e}")
+    print("\n" + "=" * 30)
+    print(f"GAME OVER! The winner is: {winner.name}")
     print("=" * 30)
-    print()
+
+    for survivor in winner.members:
+        if survivor.is_alive:
+            print(f"{survivor.name}: {survivor.health_points} HP remaining.")
 
 
 if __name__ == "__main__":
